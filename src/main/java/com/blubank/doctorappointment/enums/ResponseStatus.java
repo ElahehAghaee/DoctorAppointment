@@ -9,11 +9,12 @@ public enum ResponseStatus {
     BAD_PARAMETERS(2940010001L, "Parameters validation error!please check parameters name, value and nullability!"),
     BAD_REQUEST(2940010002L,"Bad Request"),
     METHOD_ARGUMENT_NOT_VALID(2940010003L, "Method Argument  not valid!"),
+    END_DATE_IS_SOONER_THAN_START_DATE(2940010004L, "End date is sooner than start date!"),
+    DURATION_IS_LESS_THAN_30_MINUTES(2940010005L, "Duration is less than 30 minutes!"),
     URL_NOT_FOUND(2940410001L, "Url not found!"),
-    REQUEST_DATA_NOT_FOUND(2940410002L, "RequestData not found!"),
-    NOT_ACCEPTABLE(2940610000L,"Not Acceptable Header!");
-
-
+    No_OPEN_APPOINTMENT(2940410002L, "There is no open appointment!"),
+    NOT_ACCEPTABLE(2940610000L,"Not Acceptable Header!"),
+    APPOINTMENT_IS_TAKEN_BY_PATIENT(2940610001L,"This appointment is taken by a patient!");
 
     private Long code;
     private String description;

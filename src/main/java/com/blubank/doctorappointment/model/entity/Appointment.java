@@ -42,7 +42,6 @@ public class Appointment {
     @Column(name = "end_time")
     private Long endTime;
 
-
     @NotNull
     @NotEmpty
     @Column(name = "date")
@@ -50,6 +49,12 @@ public class Appointment {
 
     @Column(name = "patient_id")
     private Integer patientId;
+
+
+    @JsonIgnore
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinColumn(name="patient_id")
+    private Patient patient;
 
 
 

@@ -13,6 +13,8 @@ import lombok.Setter;
 public class ViewAppointmentsRequest {
 
     private Integer doctorId;
-    private Boolean appointmentStatus;
+    private Boolean openStaus;
     private String phoneNumber;
+    private Long fromDate;
+    private Long toDate;
 }

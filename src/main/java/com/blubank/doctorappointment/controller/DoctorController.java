@@ -36,11 +36,11 @@ public class DoctorController {
         return new ResponseEntity<>(generalResponse, HttpStatus.OK);
     }
 
-    @DeleteMapping("deleteOpenAppointment/{doctorId}")
-    public ResponseEntity<GeneralResponse> delete( @Valid @PathVariable Integer doctorId,Errors errors)
+    @DeleteMapping("deleteOpenAppointment/{appointmentId}")
+    public ResponseEntity<GeneralResponse> delete( @Valid @PathVariable Integer appointmentId,Errors errors)
             throws Exception{
         functions.handleParameterValidationException(errors);
-        GeneralResponse generalResponse = doctorAppointmentService.deleteOpenAppointment(doctorId);
+        GeneralResponse generalResponse = doctorAppointmentService.deleteOpenAppointment(appointmentId);
         return new ResponseEntity<>(generalResponse, HttpStatus.OK);
     }
 
