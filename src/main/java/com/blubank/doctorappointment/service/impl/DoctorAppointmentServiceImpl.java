@@ -41,17 +41,13 @@ public class DoctorAppointmentServiceImpl implements DoctorAppointmentService {
 
         Long duration= addOpenTimesRequest.getEndTime()-addOpenTimesRequest.getStartTime();
         if(duration>=1800000){
-            Long openTimesCount= duration/(1800000);
             Long periodStartTime=addOpenTimesRequest.getStartTime();
-
             List<Appointment> openTimesAppointment=new ArrayList<Appointment>();
-
-            for (int i = 0; i < openTimesCount; i++) {
+            while(periodStartTime<addOpenTimesRequest.getEndTime()){
                 Appointment appointment=new Appointment();
-
                 appointment.setStartTime(periodStartTime);
                 appointment.setEndTime(addOpenTimesRequest.getStartTime()+1800000);
-                appointment.setDoctorId(addOpenTimesRequest.getDoctorId());
+                appointment.getDoctor().setId(addOpenTimesRequest.getDoctorId());
                 appointment.setDate(addOpenTimesRequest.getDate());
 
                 periodStartTime=addOpenTimesRequest.getStartTime()+1800000;
@@ -59,9 +55,10 @@ public class DoctorAppointmentServiceImpl implements DoctorAppointmentService {
                 openTimesAppointment.add(appointment);
                 appointmentRepository.save(appointment);
             }
+
             generalResponse.setMessage(openTimesAppointment);
             generalResponse.setError(false);
-            generalResponse.setResult_number(openTimesCount);
+            generalResponse.setResult_number(Long.valueOf(openTimesAppointment.size()));
 
         }else{
             throw new BusinessException(ResponseStatus.DURATION_IS_LESS_THAN_30_MINUTES);
@@ -105,7 +102,7 @@ public class DoctorAppointmentServiceImpl implements DoctorAppointmentService {
                 throw new BusinessException(ResponseStatus.No_OPEN_APPOINTMENT);
 
 
-            if (optionalAppointment.get().getPatientId() != null)
+            if (optionalAppointment.get().getPatient().getId() != null)
                 throw new BusinessException(ResponseStatus.APPOINTMENT_IS_TAKEN_BY_PATIENT);
 
 

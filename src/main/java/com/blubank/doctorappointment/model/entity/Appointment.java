@@ -25,10 +25,10 @@ public class Appointment {
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     private Integer id;
 
-    @NotNull
-    @NotEmpty
-    @Column(name = "doctor_id")
-    private Integer doctorId;
+//    @NotNull
+//    @NotEmpty
+//    @Column(name = "doctor_id")
+//    private Integer doctorId;
 
 
     @NotNull
@@ -47,14 +47,22 @@ public class Appointment {
     @Column(name = "date")
     private Long date;
 
-    @Column(name = "patient_id")
-    private Integer patientId;
+//    @Column(name = "patient_id")
+//    private Integer patientId;
 
 
     @JsonIgnore
-    @ManyToMany(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="patient_id")
     private Patient patient;
+
+
+    @JsonIgnore
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="doctor_id")
+    private Doctor doctor;
+
+
 
 
 
