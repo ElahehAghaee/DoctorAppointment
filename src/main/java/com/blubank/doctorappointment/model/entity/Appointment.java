@@ -19,16 +19,10 @@ import javax.validation.constraints.NotNull;
 @NoArgsConstructor
 public class Appointment {
 
-    @JsonIgnore
     @Column(name = "id")
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     private Integer id;
-
-//    @NotNull
-//    @NotEmpty
-//    @Column(name = "doctor_id")
-//    private Integer doctorId;
 
 
     @NotNull
@@ -46,9 +40,6 @@ public class Appointment {
     @NotEmpty
     @Column(name = "date")
     private Long date;
-
-//    @Column(name = "patient_id")
-//    private Integer patientId;
 
 
     @JsonIgnore

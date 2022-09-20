@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.checkerframework.common.aliasing.qual.Unique;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
@@ -23,7 +24,6 @@ import javax.validation.constraints.Size;
 public class Patient {
     private static final long serialVersionUID = 1L;
 
-    @JsonIgnore
     @Column(name = "id")
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
@@ -36,6 +36,7 @@ public class Patient {
 
     @NotNull
     @NotEmpty
+    @Unique
     @Column(name = "phone_number")
     private String phoneNumber;
 

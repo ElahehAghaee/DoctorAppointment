@@ -19,7 +19,6 @@ import javax.validation.constraints.NotNull;
 @NoArgsConstructor
 public class Doctor {
 
-    @JsonIgnore
     @Column(name = "id")
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
