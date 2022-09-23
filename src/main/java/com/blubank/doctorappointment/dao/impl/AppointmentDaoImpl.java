@@ -75,7 +75,6 @@ public class AppointmentDaoImpl implements AppointmentDao {
         EntityType<Appointment> appointmentMetaModel = m.entity(Appointment.class);
         Join<Appointment, Doctor> doctorRoot= appointmentRoot.join("doctor", JoinType.INNER);
         Set<Predicate> predicates = new HashSet<>(2);
-        Set<Predicate> ovelapTimePredicates = new HashSet<>(2);
 
         Predicate doctorPredicate=null;
         Predicate ovelapTimePredicate1 = null;
@@ -90,9 +89,8 @@ public class AppointmentDaoImpl implements AppointmentDao {
 
         if(appointmentDto.getStartDateTime()!=null && appointmentDto.getEndDateTime()!=null) {
 
-            Predicate ovelapTimePredicate10=criteriaBuilder.le(appointmentRoot.get("startDateTime"), appointmentDto.getStartDateTime());
-            Predicate ovelapTimePredicate11=criteriaBuilder.le(appointmentRoot.get("startDateTime"), appointmentDto.getStartDateTime());
-            ovelapTimePredicate1=criteriaBuilder.and(ovelapTimePredicate10,ovelapTimePredicate11);
+            ovelapTimePredicate1=criteriaBuilder.and(criteriaBuilder.le(appointmentRoot.get("startDateTime"), appointmentDto.getStartDateTime())
+                                                    ,criteriaBuilder.le(appointmentRoot.get("startDateTime"), appointmentDto.getStartDateTime()));
 
             ovelapTimePredicate2 = criteriaBuilder.and(criteriaBuilder.ge(appointmentRoot.get("startDateTime"), appointmentDto.getStartDateTime()),
                                                         criteriaBuilder.le(appointmentRoot.get("endDateTime"), appointmentDto.getStartDateTime()));

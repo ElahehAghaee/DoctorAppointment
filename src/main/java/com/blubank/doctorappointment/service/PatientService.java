@@ -12,5 +12,4 @@ public interface PatientService {
     GeneralResponse list();
     GeneralResponse retrieve(Integer id) throws Exception;
 
-
 }
