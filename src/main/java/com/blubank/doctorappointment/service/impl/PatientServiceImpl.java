@@ -69,7 +69,7 @@ public class PatientServiceImpl implements PatientService {
                 return generalResponse;
             }else
             {
-                throw new BusinessException(ResponseStatus.DOCTOR_NOT_FOUND);
+                throw new BusinessException(ResponseStatus.PATIENT_NOT_FOUND);
             }
         } catch (Exception e){
             throw e;
@@ -104,7 +104,7 @@ public class PatientServiceImpl implements PatientService {
 
             return generalResponse;
         } else {
-            throw new BusinessException(ResponseStatus.DOCTOR_NOT_FOUND);
+            throw new BusinessException(ResponseStatus.PATIENT_NOT_FOUND);
         }
     }
 

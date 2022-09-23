@@ -1,8 +1,7 @@
 package com.blubank.doctorappointment.controller;
 
 import com.blubank.doctorappointment.model.entity.Doctor;
-import com.blubank.doctorappointment.model.request.AddOpenTimesRequest;
-import com.blubank.doctorappointment.model.request.ViewAppointmentsRequest;
+import com.blubank.doctorappointment.model.request.AppointmentDto;
 import com.blubank.doctorappointment.model.response.GeneralResponse;
 import com.blubank.doctorappointment.service.DoctorAppointmentService;
 import com.blubank.doctorappointment.service.DoctorService;
@@ -66,16 +65,16 @@ public class DoctorController {
    //Doctor appointment services
 
     @PostMapping("/appointment/addOpenTimes")
-    ResponseEntity<GeneralResponse> addOpenTimes(@Valid @RequestBody AddOpenTimesRequest addOpenTimesRequest, Errors errors) throws Exception {
+    ResponseEntity<GeneralResponse> addOpenTimes(@Valid @RequestBody AppointmentDto appointmentDto, Errors errors) throws Exception {
         functions.handleParameterValidationException(errors);
-        GeneralResponse generalResponse = doctorAppointmentService.addOpenTimes(addOpenTimesRequest);
+        GeneralResponse generalResponse = doctorAppointmentService.addOpenTimes(appointmentDto);
         return new ResponseEntity<>(generalResponse, HttpStatus.OK);
     }
 
     @PostMapping("/appointment/viewAppointments")
-    ResponseEntity<GeneralResponse> viewAppointments(@Valid @RequestBody ViewAppointmentsRequest viewAppointmentsRequest, Errors errors) throws Exception {
+    ResponseEntity<GeneralResponse> viewAppointments(@Valid @RequestBody AppointmentDto appointmentDto, Errors errors) throws Exception {
         functions.handleParameterValidationException(errors);
-        GeneralResponse generalResponse = doctorAppointmentService.viewAppointments(viewAppointmentsRequest);
+        GeneralResponse generalResponse = doctorAppointmentService.viewAppointments(appointmentDto);
         return new ResponseEntity<>(generalResponse, HttpStatus.OK);
     }
 

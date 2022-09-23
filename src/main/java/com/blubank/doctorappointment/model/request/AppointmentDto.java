@@ -6,15 +6,17 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import javax.validation.constraints.NotNull;
+
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class ViewAppointmentsRequest {
+public class AppointmentDto {
 
     private Integer doctorId;
     private Boolean openStaus;
     private String phoneNumber;
-    private Long fromDate;
-    private Long toDate;
+    private Long startDateTime;
+    private Long endDateTime;
 }

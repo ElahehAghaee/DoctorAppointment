@@ -2,19 +2,19 @@ package com.blubank.doctorappointment.service.impl;
 
 import com.blubank.doctorappointment.dao.AppointmentDao;
 import com.blubank.doctorappointment.dao.repo.AppointmentRepository;
+import com.blubank.doctorappointment.dao.repo.DoctorRepository;
 import com.blubank.doctorappointment.enums.ResponseStatus;
 import com.blubank.doctorappointment.exception.BusinessException;
 import com.blubank.doctorappointment.model.entity.Appointment;
-import com.blubank.doctorappointment.model.request.AddOpenTimesRequest;
-import com.blubank.doctorappointment.model.request.ViewAppointmentsRequest;
+import com.blubank.doctorappointment.model.entity.Doctor;
+import com.blubank.doctorappointment.model.request.AppointmentDto;
 import com.blubank.doctorappointment.model.response.GeneralResponse;
 import com.blubank.doctorappointment.service.DoctorAppointmentService;
+import org.springframework.beans.factory.annotation.Value;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -31,26 +31,44 @@ public class DoctorAppointmentServiceImpl implements DoctorAppointmentService {
     @Autowired
     AppointmentDao appointmentDao;
 
+    @Autowired
+    DoctorRepository doctorRepository;
+
+    @Value("${time.to.break.down}")
+    private Long timeToBreakDown;
+
+
 
     @Override
-    public GeneralResponse addOpenTimes(AddOpenTimesRequest addOpenTimesRequest) {
+    public GeneralResponse addOpenTimes(AppointmentDto appointmentDto) {
         try{
             GeneralResponse generalResponse=new GeneralResponse();
-            if(addOpenTimesRequest!=null && addOpenTimesRequest.getStartTime()>addOpenTimesRequest.getEndTime())
+            if(appointmentDto!=null && appointmentDto.getStartDateTime()>appointmentDto.getEndDateTime())
                 throw new BusinessException(ResponseStatus.END_DATE_IS_SOONER_THAN_START_DATE);
 
-        Long duration= addOpenTimesRequest.getEndTime()-addOpenTimesRequest.getStartTime();
-        if(duration>=1800000){
-            Long periodStartTime=addOpenTimesRequest.getStartTime();
-            List<Appointment> openTimesAppointment=new ArrayList<Appointment>();
-            while(periodStartTime<addOpenTimesRequest.getEndTime()){
-                Appointment appointment=new Appointment();
-                appointment.setStartTime(periodStartTime);
-                appointment.setEndTime(addOpenTimesRequest.getStartTime()+1800000);
-                appointment.getDoctor().setId(addOpenTimesRequest.getDoctorId());
-                appointment.setDate(addOpenTimesRequest.getDate());
+        Optional<Doctor> doctor=doctorRepository.findById(appointmentDto.getDoctorId());
+        if(!doctor.isPresent())
+            throw new BusinessException(ResponseStatus.DOCTOR_NOT_FOUND);
 
-                periodStartTime=addOpenTimesRequest.getStartTime()+1800000;
+        //30 minutes is equal to 1800000 milliseconds
+        Long duration= appointmentDto.getEndDateTime()-appointmentDto.getStartDateTime();
+        if(duration<timeToBreakDown)
+            throw new BusinessException(ResponseStatus.DURATION_IS_LESS_THAN_30_MINUTES);
+
+        if(checkTimeOvelap(appointmentDto))
+            throw new BusinessException(ResponseStatus.TIMES_HAS_OVERLAP);
+
+
+            Long periodStartTime=appointmentDto.getStartDateTime();
+            List<Appointment> openTimesAppointment=new ArrayList<Appointment>();
+            while(periodStartTime<appointmentDto.getEndDateTime() && periodStartTime+timeToBreakDown<appointmentDto.getEndDateTime()){
+                Appointment appointment=new Appointment();
+                appointment.setStartDateTime(periodStartTime);
+                appointment.setEndDateTime(periodStartTime+timeToBreakDown);
+                appointment.setDoctor(doctor.get());
+                appointment.getDoctor().setId(appointmentDto.getDoctorId());
+
+                periodStartTime=periodStartTime+timeToBreakDown;
 
                 openTimesAppointment.add(appointment);
                 appointmentRepository.save(appointment);
@@ -60,9 +78,6 @@ public class DoctorAppointmentServiceImpl implements DoctorAppointmentService {
             generalResponse.setError(false);
             generalResponse.setResult_number(Long.valueOf(openTimesAppointment.size()));
 
-        }else{
-            throw new BusinessException(ResponseStatus.DURATION_IS_LESS_THAN_30_MINUTES);
-        }
 
         return generalResponse;
 
@@ -73,12 +88,12 @@ public class DoctorAppointmentServiceImpl implements DoctorAppointmentService {
     }
 
     @Override
-    public GeneralResponse viewAppointments(ViewAppointmentsRequest viewAppointmentsRequest) {
+    public GeneralResponse viewAppointments(AppointmentDto appointmentDto) {
         try{
             GeneralResponse generalResponse=new GeneralResponse();
 
             List<Appointment> appointments=new ArrayList<Appointment>();
-            appointments= appointmentDao.findAllOpenAppointments(viewAppointmentsRequest);
+            appointments= appointmentDao.findAllOpenAppointments(appointmentDto);
 
             generalResponse.setMessage(appointments);
             generalResponse.setError(false);
@@ -120,5 +135,15 @@ public class DoctorAppointmentServiceImpl implements DoctorAppointmentService {
         } catch (Exception ex) {
             throw ex;
         }
+    }
+
+    private Boolean checkTimeOvelap(AppointmentDto appointmentDto){
+        Boolean hasTimeOverLap=false;
+        List<Appointment> appointments=appointmentDao.FindTimeOverLaps(appointmentDto);
+
+    if(appointments!=null && appointments.size()>0)
+        hasTimeOverLap=true;
+
+       return hasTimeOverLap;
     }
 }

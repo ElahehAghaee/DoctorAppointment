@@ -26,20 +26,13 @@ public class Appointment {
 
 
     @NotNull
-    @NotEmpty
-    @Column(name = "start_time")
-    private Long startTime;
+    @Column(name = "start_date_time")
+    private Long startDateTime;
 
 
     @NotNull
-    @NotEmpty
-    @Column(name = "end_time")
-    private Long endTime;
-
-    @NotNull
-    @NotEmpty
-    @Column(name = "date")
-    private Long date;
+    @Column(name = "end_date_time")
+    private Long endDateTime;
 
 
     @JsonIgnore
@@ -51,6 +44,7 @@ public class Appointment {
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="doctor_id")
+    @NotNull
     private Doctor doctor;
 
 

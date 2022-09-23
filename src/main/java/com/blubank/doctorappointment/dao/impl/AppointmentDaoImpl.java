@@ -3,20 +3,19 @@ package com.blubank.doctorappointment.dao.impl;
 
 import com.blubank.doctorappointment.dao.AppointmentDao;
 import com.blubank.doctorappointment.model.entity.Appointment;
+import com.blubank.doctorappointment.model.entity.Doctor;
 import com.blubank.doctorappointment.model.entity.Patient;
-import com.blubank.doctorappointment.model.request.ViewAppointmentsRequest;
+import com.blubank.doctorappointment.model.request.AppointmentDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
 import javax.persistence.criteria.*;
 import javax.persistence.metamodel.EntityType;
 import javax.persistence.metamodel.Metamodel;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 
 
@@ -26,40 +25,88 @@ public class AppointmentDaoImpl implements AppointmentDao {
     @PersistenceContext
     private EntityManager entityManager;
 
-    private Logger log = LoggerFactory.getLogger(getClass());
+    private Logger logger = LoggerFactory.getLogger(getClass());
 
 
     @Override
-    public List<Appointment> findAllOpenAppointments(ViewAppointmentsRequest viewAppointmentsRequest){
+    public List<Appointment> findAllOpenAppointments(AppointmentDto appointmentDto){
         CriteriaBuilder criteriaBuilder=entityManager.getCriteriaBuilder();
         CriteriaQuery<Appointment> criteriaQuery=criteriaBuilder.createQuery(Appointment.class);
         Root<Appointment> appointmentRoot = criteriaQuery.from(Appointment.class);
         Metamodel m = entityManager.getMetamodel();
         EntityType<Appointment> appointmentMetaModel = m.entity(Appointment.class);
-        Join<Appointment, Patient> patientRoot= appointmentRoot.join("patient", JoinType.INNER);
+        Join<Appointment, Patient> patientRoot= appointmentRoot.join("patient", JoinType.LEFT);
+        Join<Appointment, Doctor> doctorRoot= appointmentRoot.join("doctor", JoinType.INNER);
         Set<Predicate> predicates = new HashSet<>(2);
 
-        if(viewAppointmentsRequest.getDoctorId()!=null){
-            predicates.add(criteriaBuilder.equal(appointmentRoot.get("doctorId"),viewAppointmentsRequest.getDoctorId() ));
+        if(appointmentDto.getDoctorId()!=null){
+            predicates.add(criteriaBuilder.equal(doctorRoot.get("id"), appointmentDto.getDoctorId() ));
         }
 
-       if (viewAppointmentsRequest.getOpenStaus()==true){
-           predicates.add(criteriaBuilder.equal(appointmentRoot.get("patientId"),null ));
-       }else if(viewAppointmentsRequest.getOpenStaus()==false){
-           predicates.add(criteriaBuilder.notEqual(appointmentRoot.get("patientId"),null ));
+       if (appointmentDto.getOpenStaus()==true){
+           predicates.add(criteriaBuilder.equal(patientRoot.get("id"),null ));
+       }else if(appointmentDto.getOpenStaus()==false){
+           predicates.add(criteriaBuilder.notEqual(patientRoot.get("id"),null ));
        }
 
-        if(viewAppointmentsRequest.getPhoneNumber()!=null){
-            predicates.add(criteriaBuilder.equal(patientRoot.get("phoneNumber"),viewAppointmentsRequest.getPhoneNumber()));
+        if(appointmentDto.getPhoneNumber()!=null){
+            predicates.add(criteriaBuilder.equal(patientRoot.get("phoneNumber"), appointmentDto.getPhoneNumber()));
         }
 
-
-        if(viewAppointmentsRequest.getFromDate()!=null){
-            predicates.add(criteriaBuilder.ge(appointmentRoot.get("date"), viewAppointmentsRequest.getFromDate()));
+        if(appointmentDto.getStartDateTime()!=null){
+            predicates.add(criteriaBuilder.ge(appointmentRoot.get("startDateTime"), appointmentDto.getStartDateTime()));
         }
 
-        if(viewAppointmentsRequest.getToDate()!=null){
-            predicates.add(criteriaBuilder.le(appointmentRoot.get("date"), viewAppointmentsRequest.getToDate()));
+        if(appointmentDto.getEndDateTime()!=null){
+            predicates.add(criteriaBuilder.le(appointmentRoot.get("endDateTime"), appointmentDto.getEndDateTime()));
+        }
+
+        criteriaQuery.where(predicates.toArray(new Predicate[predicates.size()]));
+        return entityManager.createQuery(criteriaQuery).getResultList();
+
+    }
+
+    @Override
+    public List<Appointment> FindTimeOverLaps(AppointmentDto appointmentDto){
+        CriteriaBuilder criteriaBuilder=entityManager.getCriteriaBuilder();
+        CriteriaQuery<Appointment> criteriaQuery=criteriaBuilder.createQuery(Appointment.class);
+        Root<Appointment> appointmentRoot = criteriaQuery.from(Appointment.class);
+        Metamodel m = entityManager.getMetamodel();
+        EntityType<Appointment> appointmentMetaModel = m.entity(Appointment.class);
+        Join<Appointment, Doctor> doctorRoot= appointmentRoot.join("doctor", JoinType.INNER);
+        Set<Predicate> predicates = new HashSet<>(2);
+        Set<Predicate> ovelapTimePredicates = new HashSet<>(2);
+
+        Predicate doctorPredicate=null;
+        Predicate ovelapTimePredicate1 = null;
+        Predicate ovelapTimePredicate2 = null;
+        Predicate ovelapTimePredicate3 = null;
+        Predicate ovelapTimePredicate4 = null;
+
+        if(appointmentDto.getDoctorId()!=null){
+            doctorPredicate=criteriaBuilder.equal(doctorRoot.get("id"), appointmentDto.getDoctorId());
+            predicates.add(doctorPredicate);
+        }
+
+        if(appointmentDto.getStartDateTime()!=null && appointmentDto.getEndDateTime()!=null) {
+
+            Predicate ovelapTimePredicate10=criteriaBuilder.le(appointmentRoot.get("startDateTime"), appointmentDto.getStartDateTime());
+            Predicate ovelapTimePredicate11=criteriaBuilder.le(appointmentRoot.get("startDateTime"), appointmentDto.getStartDateTime());
+            ovelapTimePredicate1=criteriaBuilder.and(ovelapTimePredicate10,ovelapTimePredicate11);
+
+            ovelapTimePredicate2 = criteriaBuilder.and(criteriaBuilder.ge(appointmentRoot.get("startDateTime"), appointmentDto.getStartDateTime()),
+                                                        criteriaBuilder.le(appointmentRoot.get("endDateTime"), appointmentDto.getStartDateTime()));
+
+
+            ovelapTimePredicate3 = criteriaBuilder.and(criteriaBuilder.ge(appointmentRoot.get("startDateTime"), appointmentDto.getStartDateTime()),
+                                                        criteriaBuilder.ge(appointmentRoot.get("endDateTime"), appointmentDto.getStartDateTime()));
+
+            ovelapTimePredicate4 = criteriaBuilder.and(criteriaBuilder.le(appointmentRoot.get("startDateTime"), appointmentDto.getStartDateTime()),
+
+                                                        criteriaBuilder.ge(appointmentRoot.get("endDateTime"), appointmentDto.getStartDateTime()));
+
+          predicates.add(criteriaBuilder.or(ovelapTimePredicate1,ovelapTimePredicate2,ovelapTimePredicate3,ovelapTimePredicate4));
+
         }
 
         criteriaQuery.where(predicates.toArray(new Predicate[predicates.size()]));

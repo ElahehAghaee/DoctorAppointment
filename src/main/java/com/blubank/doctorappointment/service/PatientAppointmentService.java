@@ -1,15 +1,14 @@
 package com.blubank.doctorappointment.service;
 
 
-import com.blubank.doctorappointment.model.request.AddOpenTimesRequest;
 import com.blubank.doctorappointment.model.request.TakeAppointmentsRequest;
-import com.blubank.doctorappointment.model.request.ViewAppointmentsRequest;
+import com.blubank.doctorappointment.model.request.AppointmentDto;
 import com.blubank.doctorappointment.model.response.GeneralResponse;
 
 public interface PatientAppointmentService {
 
-    GeneralResponse viewOpenAppointments(ViewAppointmentsRequest viewAppointmentsRequest);
+    GeneralResponse viewOpenAppointments(AppointmentDto appointmentDto);
     GeneralResponse takeAppointment(TakeAppointmentsRequest takeAppointmentsRequest);
-    GeneralResponse viewOwnAppointments(ViewAppointmentsRequest viewAppointmentsRequest);
+    GeneralResponse viewOwnAppointments(AppointmentDto appointmentDto);
 
 }

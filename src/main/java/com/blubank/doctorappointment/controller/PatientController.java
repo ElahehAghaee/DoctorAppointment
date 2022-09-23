@@ -2,7 +2,7 @@ package com.blubank.doctorappointment.controller;
 
 import com.blubank.doctorappointment.model.entity.Patient;
 import com.blubank.doctorappointment.model.request.TakeAppointmentsRequest;
-import com.blubank.doctorappointment.model.request.ViewAppointmentsRequest;
+import com.blubank.doctorappointment.model.request.AppointmentDto;
 import com.blubank.doctorappointment.model.response.GeneralResponse;
 import com.blubank.doctorappointment.service.PatientAppointmentService;
 import com.blubank.doctorappointment.service.PatientService;
@@ -66,9 +66,9 @@ public class PatientController {
     //Patient appointment sevices
 
     @PostMapping("/appointment/viewOpenAppointments")
-    ResponseEntity<GeneralResponse> viewOpenAppointments(@Valid @RequestBody ViewAppointmentsRequest viewAppointmentsRequest, Errors errors) throws Exception {
+    ResponseEntity<GeneralResponse> viewOpenAppointments(@Valid @RequestBody AppointmentDto appointmentDto, Errors errors) throws Exception {
         functions.handleParameterValidationException(errors);
-        GeneralResponse generalResponse = patientAppointmentService.viewOpenAppointments(viewAppointmentsRequest);
+        GeneralResponse generalResponse = patientAppointmentService.viewOpenAppointments(appointmentDto);
         return new ResponseEntity<>(generalResponse, HttpStatus.OK);
     }
 
@@ -80,9 +80,9 @@ public class PatientController {
     }
 
     @PostMapping("/appointment/viewOwnAppointments")
-    ResponseEntity<GeneralResponse> viewOwnAppointments(@Valid @RequestBody ViewAppointmentsRequest viewAppointmentsRequest, Errors errors) throws Exception {
+    ResponseEntity<GeneralResponse> viewOwnAppointments(@Valid @RequestBody AppointmentDto appointmentDto, Errors errors) throws Exception {
         functions.handleParameterValidationException(errors);
-        GeneralResponse generalResponse = patientAppointmentService.viewOwnAppointments(viewAppointmentsRequest);
+        GeneralResponse generalResponse = patientAppointmentService.viewOwnAppointments(appointmentDto);
         return new ResponseEntity<>(generalResponse, HttpStatus.OK);
     }
 

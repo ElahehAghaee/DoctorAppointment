@@ -2,13 +2,14 @@ package com.blubank.doctorappointment.dao;
 
 
 import com.blubank.doctorappointment.model.entity.Appointment;
-import com.blubank.doctorappointment.model.request.ViewAppointmentsRequest;
+import com.blubank.doctorappointment.model.request.AppointmentDto;
 
 import java.util.List;
 
 public interface AppointmentDao {
 
-    public List<Appointment> findAllOpenAppointments(ViewAppointmentsRequest viewAppointmentsRequest);
+     List<Appointment> findAllOpenAppointments(AppointmentDto appointmentDto);
+     List<Appointment> FindTimeOverLaps(AppointmentDto appointmentDto);
 
 
 }

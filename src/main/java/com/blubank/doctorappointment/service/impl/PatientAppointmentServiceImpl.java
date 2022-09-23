@@ -4,7 +4,7 @@ import com.blubank.doctorappointment.dao.AppointmentDao;
 import com.blubank.doctorappointment.dao.repo.AppointmentRepository;
 import com.blubank.doctorappointment.model.entity.Appointment;
 import com.blubank.doctorappointment.model.request.TakeAppointmentsRequest;
-import com.blubank.doctorappointment.model.request.ViewAppointmentsRequest;
+import com.blubank.doctorappointment.model.request.AppointmentDto;
 import com.blubank.doctorappointment.model.response.GeneralResponse;
 import com.blubank.doctorappointment.service.PatientAppointmentService;
 import org.slf4j.Logger;
@@ -29,12 +29,12 @@ public class PatientAppointmentServiceImpl implements PatientAppointmentService 
 
 
     @Override
-    public GeneralResponse viewOpenAppointments(ViewAppointmentsRequest viewAppointmentsRequest) {
+    public GeneralResponse viewOpenAppointments(AppointmentDto appointmentDto) {
         try{
             GeneralResponse generalResponse=new GeneralResponse();
 
             List<Appointment> appointments=new ArrayList<Appointment>();
-            appointments= appointmentDao.findAllOpenAppointments(viewAppointmentsRequest);
+            appointments= appointmentDao.findAllOpenAppointments(appointmentDto);
 
             generalResponse.setMessage(appointments);
             generalResponse.setError(false);
@@ -53,7 +53,7 @@ public class PatientAppointmentServiceImpl implements PatientAppointmentService 
     }
 
     @Override
-    public GeneralResponse viewOwnAppointments(ViewAppointmentsRequest viewAppointmentsRequest) {
+    public GeneralResponse viewOwnAppointments(AppointmentDto appointmentDto) {
         return null;
     }
 }
