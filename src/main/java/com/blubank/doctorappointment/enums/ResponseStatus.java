@@ -18,6 +18,8 @@ public enum ResponseStatus {
     No_OPEN_APPOINTMENT(2940410002L, "There is no open appointment!"),
     DOCTOR_NOT_FOUND(2940410003L, "Doctor not found!"),
     PATIENT_NOT_FOUND(2940410004L, "Patient not found!"),
+    APPOINTMENT_NOT_FOUND(2940410005L, "Appointment not found !"),
+    APPOINTMENT_ALREADY_TAKEN_OR_DELETED(2940410006L, "Appointment is already taken or deleted!"),
     NOT_ACCEPTABLE(2940610000L,"Not Acceptable Header!"),
     APPOINTMENT_IS_TAKEN_BY_PATIENT(2940610001L,"This appointment is taken by a patient!");
 
