@@ -15,15 +15,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.time.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 
 @Service
 public class DoctorAppointmentServiceImpl implements DoctorAppointmentService {
     private  Logger logger = LoggerFactory.getLogger(getClass());
-
 
     @Autowired
     AppointmentRepository appointmentRepository;
@@ -36,8 +38,6 @@ public class DoctorAppointmentServiceImpl implements DoctorAppointmentService {
 
     @Value("${time.to.break.down}")
     private Long timeToBreakDown;
-
-
 
     @Override
     public GeneralResponse addOpenTimes(AppointmentDto appointmentDto) {
@@ -56,12 +56,11 @@ public class DoctorAppointmentServiceImpl implements DoctorAppointmentService {
             throw new BusinessException(ResponseStatus.DURATION_IS_LESS_THAN_30_MINUTES);
 
         if(checkTimeOvelap(appointmentDto))
-            throw new BusinessException(ResponseStatus.TIMES_HAS_OVERLAP);
-
+            throw new BusinessException(ResponseStatus.TIMES_HAVE_OVERLAP);
 
             Long periodStartTime=appointmentDto.getStartDateTime();
             List<Appointment> openTimesAppointment=new ArrayList<Appointment>();
-            while(periodStartTime<appointmentDto.getEndDateTime() && periodStartTime+timeToBreakDown<appointmentDto.getEndDateTime()){
+            while(periodStartTime<appointmentDto.getEndDateTime() && periodStartTime+timeToBreakDown<=appointmentDto.getEndDateTime()){
                 Appointment appointment=new Appointment();
                 appointment.setStartDateTime(periodStartTime);
                 appointment.setEndDateTime(periodStartTime+timeToBreakDown);
@@ -95,6 +94,15 @@ public class DoctorAppointmentServiceImpl implements DoctorAppointmentService {
             List<Appointment> appointments=new ArrayList<Appointment>();
             appointments= appointmentDao.findAllOpenAppointments(appointmentDto);
 
+           if(appointments!=null && appointments.size()>0)
+           {
+             appointments.stream()
+            .filter(appointment -> appointment.getPatient()!=null)
+            .peek(appointment -> appointment.setPatientName(appointment.getPatient().getName()))
+            .peek(appointment -> appointment.setPatientPhoneNumber(appointment.getPatient().getPhoneNumber()))
+            .collect(Collectors.toList());
+             }
+
             generalResponse.setMessage(appointments);
             generalResponse.setError(false);
             generalResponse.setResult_number(Long.valueOf(appointments.size()));
@@ -117,12 +125,11 @@ public class DoctorAppointmentServiceImpl implements DoctorAppointmentService {
                 throw new BusinessException(ResponseStatus.No_OPEN_APPOINTMENT);
 
 
-            if (optionalAppointment.get().getPatient().getId() != null)
+            if (optionalAppointment.get().getPatient()!= null)
                 throw new BusinessException(ResponseStatus.APPOINTMENT_IS_TAKEN_BY_PATIENT);
 
 
             //Concurrency Check.......................
-
 
             appointmentRepository.delete(optionalAppointment.get());
 
@@ -141,9 +148,14 @@ public class DoctorAppointmentServiceImpl implements DoctorAppointmentService {
         Boolean hasTimeOverLap=false;
         List<Appointment> appointments=appointmentDao.FindTimeOverLaps(appointmentDto);
 
-    if(appointments!=null && appointments.size()>0)
+        if(appointments!=null && appointments.size()>0)
         hasTimeOverLap=true;
 
        return hasTimeOverLap;
     }
+
+
+
+
+
 }

@@ -42,10 +42,11 @@ public class DoctorController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<GeneralResponse> delete(@Valid  @PathVariable Integer id)
+    public ResponseEntity<GeneralResponse> delete( @PathVariable Integer id)
             throws Exception{
-        GeneralResponse GeneralResponse = doctorService.delete(id);
-        return new ResponseEntity<>(GeneralResponse, HttpStatus.OK);
+        //functions.handleParameterValidationException(errors);
+        GeneralResponse generalResponse = doctorAppointmentService.deleteOpenAppointment(id);
+        return new ResponseEntity<>(generalResponse, HttpStatus.OK);
     }
 
     @GetMapping("/list")
@@ -71,20 +72,14 @@ public class DoctorController {
         return new ResponseEntity<>(generalResponse, HttpStatus.OK);
     }
 
-    @PostMapping("/appointment/viewAppointments")
+    @GetMapping("/appointment/viewAppointments")
     ResponseEntity<GeneralResponse> viewAppointments(@Valid @RequestBody AppointmentDto appointmentDto, Errors errors) throws Exception {
         functions.handleParameterValidationException(errors);
         GeneralResponse generalResponse = doctorAppointmentService.viewAppointments(appointmentDto);
         return new ResponseEntity<>(generalResponse, HttpStatus.OK);
     }
 
-    @DeleteMapping("/appointment/deleteOpenAppointment/{appointmentId}")
-    public ResponseEntity<GeneralResponse> delete( @Valid @PathVariable Integer appointmentId,Errors errors)
-            throws Exception{
-        functions.handleParameterValidationException(errors);
-        GeneralResponse generalResponse = doctorAppointmentService.deleteOpenAppointment(appointmentId);
-        return new ResponseEntity<>(generalResponse, HttpStatus.OK);
-    }
+
 
 
 }

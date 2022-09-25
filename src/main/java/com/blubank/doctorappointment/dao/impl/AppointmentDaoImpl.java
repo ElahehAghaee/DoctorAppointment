@@ -43,10 +43,10 @@ public class AppointmentDaoImpl implements AppointmentDao {
             predicates.add(criteriaBuilder.equal(doctorRoot.get("id"), appointmentDto.getDoctorId() ));
         }
 
-       if (appointmentDto.getOpenStaus()==true){
-           predicates.add(criteriaBuilder.equal(patientRoot.get("id"),null ));
-       }else if(appointmentDto.getOpenStaus()==false){
-           predicates.add(criteriaBuilder.notEqual(patientRoot.get("id"),null ));
+       if (appointmentDto.getOpenStaus()!=null && appointmentDto.getOpenStaus()==true){
+           predicates.add(criteriaBuilder.isNull(patientRoot.get("id")));
+       }else if(appointmentDto.getOpenStaus()!=null && appointmentDto.getOpenStaus()==false){
+           predicates.add(criteriaBuilder.isNotNull(patientRoot.get("id") ));
        }
 
         if(appointmentDto.getPhoneNumber()!=null){

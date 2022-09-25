@@ -13,7 +13,7 @@ public enum ResponseStatus {
     DURATION_IS_LESS_THAN_30_MINUTES(2940010005L, "Duration is less than 30 minutes!"),
     DOCTOR_NAME_ALREADY_EXIST(2940010006L, "Doctor name Already exist"),
     PATIENT_PHONE_NUMBER_ALREADY_EXIST(2940010007L, "Patient phone number Already exist!"),
-    TIMES_HAS_OVERLAP(2940010008L, "The times has overlap!"),
+    TIMES_HAVE_OVERLAP(2940010008L, "The times have overlap!"),
     URL_NOT_FOUND(2940410001L, "Url not found!"),
     No_OPEN_APPOINTMENT(2940410002L, "There is no open appointment!"),
     DOCTOR_NOT_FOUND(2940410003L, "Doctor not found!"),

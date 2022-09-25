@@ -65,7 +65,7 @@ public class PatientController {
 
     //Patient appointment sevices
 
-    @PostMapping("/appointment/viewOpenAppointments")
+    @GetMapping("/appointment/viewOpenAppointments")
     ResponseEntity<GeneralResponse> viewOpenAppointments(@Valid @RequestBody AppointmentDto appointmentDto, Errors errors) throws Exception {
         functions.handleParameterValidationException(errors);
         GeneralResponse generalResponse = patientAppointmentService.viewOpenAppointments(appointmentDto);
@@ -79,7 +79,7 @@ public class PatientController {
         return new ResponseEntity<>(generalResponse, HttpStatus.OK);
     }
 
-    @PostMapping("/appointment/viewOwnAppointments")
+    @GetMapping("/appointment/viewOwnAppointments")
     ResponseEntity<GeneralResponse> viewOwnAppointments(@Valid @RequestBody AppointmentDto appointmentDto, Errors errors) throws Exception {
         functions.handleParameterValidationException(errors);
         GeneralResponse generalResponse = patientAppointmentService.viewOwnAppointments(appointmentDto);

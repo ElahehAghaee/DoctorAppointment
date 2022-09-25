@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -42,6 +43,7 @@ public class PatientAppointmentServiceImpl implements PatientAppointmentService 
             GeneralResponse generalResponse = new GeneralResponse();
 
             List<Appointment> appointments = new ArrayList<Appointment>();
+            appointmentDto.setOpenStaus(true);
             appointments = appointmentDao.findAllOpenAppointments(appointmentDto);
 
             generalResponse.setMessage(appointments);
@@ -60,11 +62,13 @@ public class PatientAppointmentServiceImpl implements PatientAppointmentService 
         try {
             GeneralResponse generalResponse = new GeneralResponse();
 
-            Appointment appointment = appointmentRepository.findByIdAndPatientId(takeAppointmentsRequest.getAppointmentId(),null);
+            Optional<Appointment> optionalAppointment = appointmentRepository.findById(takeAppointmentsRequest.getAppointmentId());
 
-            if (appointment!=null) {
+            if (!optionalAppointment.isPresent() || optionalAppointment.get().getPatient()!=null) {
                 throw new BusinessException(ResponseStatus.APPOINTMENT_ALREADY_TAKEN_OR_DELETED);
             }
+
+            Appointment appointment=optionalAppointment.get();
 
             Patient existPatient = patientRepository.findFirstByPhoneNumber(takeAppointmentsRequest.getPhoneNumber());
             if (existPatient == null) {
@@ -77,6 +81,9 @@ public class PatientAppointmentServiceImpl implements PatientAppointmentService 
                 appointment.setPatient(existPatient);
 
             appointmentRepository.save(appointment);
+
+            appointment.setPatientName(appointment.getPatient().getName());
+            appointment.setPatientPhoneNumber(appointment.getPatient().getPhoneNumber());
 
             generalResponse.setMessage(appointment);
             generalResponse.setError(false);
@@ -95,6 +102,16 @@ public class PatientAppointmentServiceImpl implements PatientAppointmentService 
 
             List<Appointment> appointments=new ArrayList<Appointment>();
             appointments= appointmentDao.findAllOpenAppointments(appointmentDto);
+
+            if(appointments!=null && appointments.size()>0)
+            {
+                appointments.stream()
+                        .filter(appointment -> appointment.getPatient()!=null)
+                        .peek(appointment -> appointment.setPatientName(appointment.getPatient().getName()))
+                        .peek(appointment -> appointment.setPatientPhoneNumber(appointment.getPatient().getPhoneNumber()))
+                        .collect(Collectors.toList());
+            }
+
 
             generalResponse.setMessage(appointments);
             generalResponse.setError(false);
