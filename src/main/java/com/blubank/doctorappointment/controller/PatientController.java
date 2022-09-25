@@ -21,9 +21,6 @@ public class PatientController {
     @Autowired
     PatientService patientService;
 
-    @Autowired
-    PatientAppointmentService patientAppointmentService;
-
 
     //Crud services for Patient Entity
 
@@ -63,28 +60,7 @@ public class PatientController {
         return new ResponseEntity<>(GeneralResponse, HttpStatus.OK);
     }
 
-    //Patient appointment sevices
 
-    @GetMapping("/appointment/viewOpenAppointments")
-    ResponseEntity<GeneralResponse> viewOpenAppointments(@Valid @RequestBody AppointmentDto appointmentDto, Errors errors) throws Exception {
-        functions.handleParameterValidationException(errors);
-        GeneralResponse generalResponse = patientAppointmentService.viewOpenAppointments(appointmentDto);
-        return new ResponseEntity<>(generalResponse, HttpStatus.OK);
-    }
-
-    @PostMapping("/appointment/takeAppointment")
-    ResponseEntity<GeneralResponse> takeAppointment(@Valid @RequestBody TakeAppointmentsRequest takeAppointmentsRequest, Errors errors) throws Exception {
-        functions.handleParameterValidationException(errors);
-        GeneralResponse generalResponse = patientAppointmentService.takeAppointment(takeAppointmentsRequest);
-        return new ResponseEntity<>(generalResponse, HttpStatus.OK);
-    }
-
-    @GetMapping("/appointment/viewOwnAppointments")
-    ResponseEntity<GeneralResponse> viewOwnAppointments(@Valid @RequestBody AppointmentDto appointmentDto, Errors errors) throws Exception {
-        functions.handleParameterValidationException(errors);
-        GeneralResponse generalResponse = patientAppointmentService.viewOwnAppointments(appointmentDto);
-        return new ResponseEntity<>(generalResponse, HttpStatus.OK);
-    }
 
 
 }

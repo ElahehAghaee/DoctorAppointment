@@ -14,6 +14,7 @@ public enum ResponseStatus {
     DOCTOR_NAME_ALREADY_EXIST(2940010006L, "Doctor name Already exist"),
     PATIENT_PHONE_NUMBER_ALREADY_EXIST(2940010007L, "Patient phone number Already exist!"),
     TIMES_HAVE_OVERLAP(2940010008L, "The times have overlap!"),
+    DOCTOR_WITH_APPOINTMENT_CANT_DELETE(2940010009L, "The doctor with appointment cant delete!"),
     URL_NOT_FOUND(2940410001L, "Url not found!"),
     No_OPEN_APPOINTMENT(2940410002L, "There is no open appointment!"),
     DOCTOR_NOT_FOUND(2940410003L, "Doctor not found!"),

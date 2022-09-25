@@ -82,7 +82,7 @@ public class AppointmentDaoImpl implements AppointmentDao {
 
         if(appointmentDto.getStartDateTime()!=null && appointmentDto.getEndDateTime()!=null) {
             Predicate timeOverlapPredicate=criteriaBuilder.and(criteriaBuilder.ge(appointmentRoot.get("startDateTime"), appointmentDto.getStartDateTime())
-                                                    ,criteriaBuilder.le(appointmentRoot.get("startDateTime"), appointmentDto.getEndDateTime()));
+                                                    ,criteriaBuilder.lessThan(appointmentRoot.get("startDateTime"), appointmentDto.getEndDateTime()));
             predicates.add(timeOverlapPredicate);
         }
 

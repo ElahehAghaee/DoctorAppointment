@@ -117,7 +117,7 @@ public class DoctorAppointmentServiceImpl implements DoctorAppointmentService {
     }
 
     @Override
-    public GeneralResponse deleteOpenAppointment(Integer appointmentId) {
+    public GeneralResponse deleteAppointment(Integer appointmentId) {
         try {
             GeneralResponse generalResponse = new GeneralResponse();
 

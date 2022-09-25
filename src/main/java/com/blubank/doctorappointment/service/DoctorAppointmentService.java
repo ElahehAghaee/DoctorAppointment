@@ -8,7 +8,7 @@ public interface DoctorAppointmentService {
 
     GeneralResponse addOpenTimes(AppointmentDto appointmentDto);
     GeneralResponse viewAppointments(AppointmentDto appointmentDto);
-    GeneralResponse deleteOpenAppointment(Integer appointmentId);
+    GeneralResponse deleteAppointment(Integer appointmentId);
 
 
 }

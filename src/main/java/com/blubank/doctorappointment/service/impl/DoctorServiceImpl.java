@@ -1,8 +1,10 @@
 package com.blubank.doctorappointment.service.impl;
 
+import com.blubank.doctorappointment.dao.repo.AppointmentRepository;
 import com.blubank.doctorappointment.dao.repo.DoctorRepository;
 import com.blubank.doctorappointment.enums.ResponseStatus;
 import com.blubank.doctorappointment.exception.BusinessException;
+import com.blubank.doctorappointment.model.entity.Appointment;
 import com.blubank.doctorappointment.model.entity.Doctor;
 import com.blubank.doctorappointment.model.response.GeneralResponse;
 import com.blubank.doctorappointment.service.DoctorService;
@@ -18,6 +20,9 @@ public class DoctorServiceImpl implements DoctorService {
 
     @Autowired
     DoctorRepository doctorRepository;
+
+    @Autowired
+    AppointmentRepository appointmentRepository;
 
 
     @Override
@@ -60,6 +65,12 @@ public class DoctorServiceImpl implements DoctorService {
             Optional<Doctor> optionalDoctor = doctorRepository.findById(id);
             if(optionalDoctor.isPresent()){
                 Doctor doctor=optionalDoctor.get();
+
+                List<Appointment> appointments=appointmentRepository.findAllByDoctorId(id);
+
+                if(appointments!=null && appointments.size()>0)
+                   throw new BusinessException(ResponseStatus.DOCTOR_WITH_APPOINTMENT_CANT_DELETE);
+
                 doctorRepository.delete(doctor);
 
                 generalResponse.setMessage("Successfully deleted.");
@@ -83,7 +94,7 @@ public class DoctorServiceImpl implements DoctorService {
             doctors = (List<Doctor>) doctorRepository.findAll();
             generalResponse.setMessage(doctors);
             generalResponse.setError(false);
-            generalResponse.setResult_number(1L);
+            generalResponse.setResult_number(doctors!=null ? doctors.size(): 0L);
             return generalResponse;
         } catch (Exception e){
             throw e;

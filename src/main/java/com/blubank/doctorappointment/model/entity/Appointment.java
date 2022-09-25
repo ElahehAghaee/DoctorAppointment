@@ -62,6 +62,7 @@ public class Appointment {
 
     @Version
     @Column(nullable = false)
+    @JsonIgnore
     private Integer version;
 
 
