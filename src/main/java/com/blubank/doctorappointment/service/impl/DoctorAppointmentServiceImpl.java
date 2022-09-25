@@ -144,10 +144,10 @@ public class DoctorAppointmentServiceImpl implements DoctorAppointmentService {
 
     private Boolean checkTimeOvelap(AppointmentDto appointmentDto){
         Boolean hasTimeOverLap=false;
-        List<Appointment> appointments=appointmentDao.FindTimeOverLaps(appointmentDto);
+        List<Appointment> appointments=appointmentDao.hasTimeOverLap(appointmentDto);
 
         if(appointments!=null && appointments.size()>0)
-        hasTimeOverLap=true;
+             hasTimeOverLap=true;
 
        return hasTimeOverLap;
     }

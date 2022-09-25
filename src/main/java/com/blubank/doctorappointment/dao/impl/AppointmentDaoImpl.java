@@ -67,7 +67,7 @@ public class AppointmentDaoImpl implements AppointmentDao {
     }
 
     @Override
-    public List<Appointment> FindTimeOverLaps(AppointmentDto appointmentDto){
+    public List<Appointment> hasTimeOverLap(AppointmentDto appointmentDto){
         CriteriaBuilder criteriaBuilder=entityManager.getCriteriaBuilder();
         CriteriaQuery<Appointment> criteriaQuery=criteriaBuilder.createQuery(Appointment.class);
         Root<Appointment> appointmentRoot = criteriaQuery.from(Appointment.class);
@@ -76,35 +76,14 @@ public class AppointmentDaoImpl implements AppointmentDao {
         Join<Appointment, Doctor> doctorRoot= appointmentRoot.join("doctor", JoinType.INNER);
         Set<Predicate> predicates = new HashSet<>(2);
 
-        Predicate doctorPredicate=null;
-        Predicate ovelapTimePredicate1 = null;
-        Predicate ovelapTimePredicate2 = null;
-        Predicate ovelapTimePredicate3 = null;
-        Predicate ovelapTimePredicate4 = null;
-
         if(appointmentDto.getDoctorId()!=null){
-            doctorPredicate=criteriaBuilder.equal(doctorRoot.get("id"), appointmentDto.getDoctorId());
-            predicates.add(doctorPredicate);
+            predicates.add(criteriaBuilder.equal(doctorRoot.get("id"), appointmentDto.getDoctorId()));
         }
 
         if(appointmentDto.getStartDateTime()!=null && appointmentDto.getEndDateTime()!=null) {
-
-            ovelapTimePredicate1=criteriaBuilder.and(criteriaBuilder.le(appointmentRoot.get("startDateTime"), appointmentDto.getStartDateTime())
-                                                    ,criteriaBuilder.le(appointmentRoot.get("startDateTime"), appointmentDto.getStartDateTime()));
-
-            ovelapTimePredicate2 = criteriaBuilder.and(criteriaBuilder.ge(appointmentRoot.get("startDateTime"), appointmentDto.getStartDateTime()),
-                                                        criteriaBuilder.le(appointmentRoot.get("endDateTime"), appointmentDto.getStartDateTime()));
-
-
-            ovelapTimePredicate3 = criteriaBuilder.and(criteriaBuilder.ge(appointmentRoot.get("startDateTime"), appointmentDto.getStartDateTime()),
-                                                        criteriaBuilder.ge(appointmentRoot.get("endDateTime"), appointmentDto.getStartDateTime()));
-
-            ovelapTimePredicate4 = criteriaBuilder.and(criteriaBuilder.le(appointmentRoot.get("startDateTime"), appointmentDto.getStartDateTime()),
-
-                                                        criteriaBuilder.ge(appointmentRoot.get("endDateTime"), appointmentDto.getStartDateTime()));
-
-          predicates.add(criteriaBuilder.or(ovelapTimePredicate1,ovelapTimePredicate2,ovelapTimePredicate3,ovelapTimePredicate4));
-
+            Predicate timeOverlapPredicate=criteriaBuilder.and(criteriaBuilder.ge(appointmentRoot.get("startDateTime"), appointmentDto.getStartDateTime())
+                                                    ,criteriaBuilder.le(appointmentRoot.get("startDateTime"), appointmentDto.getEndDateTime()));
+            predicates.add(timeOverlapPredicate);
         }
 
         criteriaQuery.where(predicates.toArray(new Predicate[predicates.size()]));

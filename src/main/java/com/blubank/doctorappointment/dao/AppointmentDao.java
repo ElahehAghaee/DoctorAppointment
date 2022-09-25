@@ -9,7 +9,7 @@ import java.util.List;
 public interface AppointmentDao {
 
      List<Appointment> findAllOpenAppointments(AppointmentDto appointmentDto);
-     List<Appointment> FindTimeOverLaps(AppointmentDto appointmentDto);
+     List<Appointment> hasTimeOverLap(AppointmentDto appointmentDto);
 
 
 }
