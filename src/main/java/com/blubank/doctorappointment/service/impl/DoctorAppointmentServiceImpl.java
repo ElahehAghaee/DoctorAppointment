@@ -16,6 +16,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.time.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -39,6 +40,7 @@ public class DoctorAppointmentServiceImpl implements DoctorAppointmentService {
     @Value("${time.to.break.down}")
     private Long timeToBreakDown;
 
+    @Transactional
     @Override
     public GeneralResponse addOpenTimes(AppointmentDto appointmentDto) {
         try{
@@ -124,12 +126,8 @@ public class DoctorAppointmentServiceImpl implements DoctorAppointmentService {
             if (optionalAppointment.isPresent() != true)
                 throw new BusinessException(ResponseStatus.No_OPEN_APPOINTMENT);
 
-
             if (optionalAppointment.get().getPatient()!= null)
                 throw new BusinessException(ResponseStatus.APPOINTMENT_IS_TAKEN_BY_PATIENT);
-
-
-            //Concurrency Check.......................
 
             appointmentRepository.delete(optionalAppointment.get());
 

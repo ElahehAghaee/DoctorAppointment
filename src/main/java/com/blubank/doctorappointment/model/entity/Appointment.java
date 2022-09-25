@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.checkerframework.common.aliasing.qual.Unique;
+import org.hibernate.annotations.OptimisticLocking;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
@@ -19,6 +20,7 @@ import javax.validation.constraints.NotNull;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@OptimisticLocking()
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class Appointment {
 
@@ -56,6 +58,11 @@ public class Appointment {
     @JoinColumn(name="doctor_id")
     @NotNull
     private Doctor doctor;
+
+
+    @Version
+    @Column(nullable = false)
+    private Integer version;
 
 
 
